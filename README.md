@@ -1,1 +1,1 @@
-# Ecommerce_24
+# Ecommerce 24 frontend and backend
