@@ -1,7 +1,8 @@
 import express from "express";
-import userRoutes from "./routes/user.js";   //importing user routes
 import { connectDB } from "./utils/features.js";
 import { ErrorMiddleware } from "./middlewares/error.js";
+import userRoutes from "./routes/user.js";   //importing user routes
+import productRoutes from "./routes/product.js";   //importing product routes
 
 const app = express();
 const port =3000;
@@ -24,9 +25,11 @@ app.get("/",(req, res, next)=>{
     });
 });
 
-// using routes
+// using routes -> user route
 app.use('/api/v1/user', userRoutes);
 
+
+app.use('api/v1/product', productRoutes);
 app.use(ErrorMiddleware);
 
 app.listen(port, ()=>{

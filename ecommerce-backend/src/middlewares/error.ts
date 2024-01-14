@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import ErrorHandler from "./utility-class.js";
+import ErrorHandler from "../utils/utility-class.js";
 import { ControllerType } from "../types/types.js";
 
 export const ErrorMiddleware = (
@@ -11,7 +11,7 @@ export const ErrorMiddleware = (
         err.message ||= "Internal Server Error";
         err.statusCode ||= 500;
     return res.status(err.statusCode).json({
-        status : 400,
+        status : err.statusCode,
         success: false,
         message: err.message,
     })
