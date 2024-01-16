@@ -28,8 +28,10 @@ app.get("/",(req, res, next)=>{
 // using routes -> user route
 app.use('/api/v1/user', userRoutes);
 
+// using routes -> product route
+app.use('/api/v1/product', productRoutes);
 
-app.use('api/v1/product', productRoutes);
+app.use('/uploads', express.static("uploads"));
 app.use(ErrorMiddleware);
 
 app.listen(port, ()=>{
