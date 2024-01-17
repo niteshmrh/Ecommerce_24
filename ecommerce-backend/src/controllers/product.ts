@@ -2,7 +2,7 @@ import { TryCatch } from './../middlewares/error.js';
 import { Product } from "../models/product.js";
 import ErrorHandler from '../utils/utility-class.js';
 import { NextFunction, Request, Response } from 'express';
-import { NewProductRequestBody, SearchRequestQuery } from '../types/types.js';
+import { BaseQuery, NewProductRequestBody, SearchRequestQuery } from '../types/types.js';
 import { rm } from 'fs';
 
 
@@ -188,14 +188,45 @@ export const getAllProducts = TryCatch(async (req : Request<{}, {}, {}, SearchRe
     console.log("-------------- get All product hit --------------------");
 
     const {search, sort, category, price} = req.query;
-    const page = Number(req.query.page);
+    const page = Number(req.query.page) || 1;
+    const limit = Number(process.env.PRODUCT_PER_PAGE) || 8 ;
+    const skip = limit * (page-1);
 
-    const products = await Product.find({}).sort({createdAt : -1}).limit(5);
+    const baseQuery : BaseQuery = {};
+
+    if(search){
+        baseQuery.name = {
+            $regex : search,
+            $options : "i",
+        };
+    }
+    if(price){
+        baseQuery.price = {
+            $lte : Number(price),
+        }
+    }
+    if(category){
+        baseQuery.category = category;
+    }
+
+    console.log("***************************",baseQuery);
+    // await here working here in parllel wise here   ('_')
+    const [products, filterOnlyProduct] = await Promise.all([
+        Product.find(baseQuery).sort(sort && {price : sort === "asc"  ? 1 : -1}).limit(limit).skip(skip),
+        Product.find(baseQuery)
+    ])
+    
+    // await works in series wise here (one by one) ---------------------------- :)
+    // const products = await Product.find(baseQuery).sort(sort && {price : sort === "asc"  ? 1 : -1}).limit(limit).skip(skip);,
+    // const filterOnlyProduct = await Product.find(baseQuery);
+    
+    const totalPage = Math.ceil(filterOnlyProduct.length/limit);
 
     return res.status(201).json({
         success:  true,
         result: products,
         message: `All Latest Product List`,
+        totalPages : totalPage,
         count: products.length
     })
 })
