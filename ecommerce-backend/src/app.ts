@@ -3,6 +3,7 @@ import { connectDB } from "./utils/features.js";
 import { ErrorMiddleware } from "./middlewares/error.js";
 import userRoutes from "./routes/user.js";   //importing user routes
 import productRoutes from "./routes/product.js";   //importing product routes
+import NodeCache from "node-cache";   // it also stores data in ram as reddish did
 
 const app = express();
 const port =3000;
@@ -10,6 +11,8 @@ const port =3000;
 // mongo connection
 
 connectDB();
+
+export const myCache = new NodeCache();
 
 app.use(express.json());
 
