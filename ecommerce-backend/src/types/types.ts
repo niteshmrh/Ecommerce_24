@@ -12,8 +12,8 @@ export interface NewUserRequestBody{
 export interface NewProductRequestBody{
     name: string;
     category: string;
-    price: Number;
-    stock: Number;
+    price: number;
+    stock: number;
 };
 
 export type ControllerType = (
@@ -48,3 +48,33 @@ export type invalidateCacheProps = {
     order? : boolean;
     admin? : boolean;
 }
+
+
+export type OrderItemType = {
+    name: string;
+    photo: string;
+    price: number;
+    quantity: number;
+    productId: string;
+}
+
+
+export type ShippingInfoType = {
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    pinCode: number;
+}
+
+export interface NewOrderRequestBody{
+    shippingInfo: ShippingInfoType;
+    user: string;
+    subTotal: number;
+    tax: number;
+    shippingCharges: number;
+    discount: number;
+    total: number;
+    status: string;
+    orderItems: OrderItemType[];
+};
