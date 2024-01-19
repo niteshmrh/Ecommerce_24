@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { OrderItemType, invalidateCacheProps } from "../types/types.js";
 import { myCache } from "../app.js";
 import { Product } from "../models/product.js";
+import { Order } from "../models/order.js";
 
 
 // mongoose.connect(url, option(dbName)).then((var)=>operations on c)
@@ -15,21 +16,22 @@ export const connectDB = (uri: string)=>{
 }
 
 // delete from the cache memory when changes added in new, update products
-export const invalidatesCache = async ({product, order, admin} : invalidateCacheProps) =>{
+export const invalidatesCache = async ({product, order, admin, userId, orderId} : invalidateCacheProps) =>{
     if(product){
         const productKeys : string[] = ["latest-products", "categories", "all-products"];
         // find id of all product for deleted particular product from the cache memory
         const products = await Product.find({}).select("_id");
         products.forEach(i => {
-            productKeys.push(`product-${i._id}`);
-            
+            productKeys.push(`product-${i._id}`);  
         });
 
         myCache.del(productKeys);
     }
     
     if(order){
-
+        const orderKeys : string[] = ["all-orders", `my-order-${userId}`, `order-${orderId}`];
+        const orders = await Order.find({}).select("_id");
+        myCache.del(orderKeys);
     }
 
     if(admin){
