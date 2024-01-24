@@ -16,7 +16,7 @@ export const adminOnly = TryCatch(async (req, res, next) =>{
     }
     // check user is admin or not
     if(user.role !== "admin"){
-        return next(new ErrorHandler("Unauthorize Right", 401));
+        return next(new ErrorHandler("Unauthorize Rights", 403));
     }
 
     // if all is good;
