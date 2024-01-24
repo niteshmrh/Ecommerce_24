@@ -98,7 +98,7 @@ export const newOrder = TryCatch( async(req:Request<{}, {}, NewOrderRequestBody>
     if(!shippingInfo || !orderItems || !user || !subTotal || !tax || !total){
         return next(new ErrorHandler("All Feild are required", 400));
     }
-    await Order.create({
+    const order = await Order.create({
         shippingInfo, 
         orderItems, 
         user, 
@@ -111,7 +111,13 @@ export const newOrder = TryCatch( async(req:Request<{}, {}, NewOrderRequestBody>
     })
 
     await reduceStock(orderItems);
-    await invalidatesCache({product : true, order : true, admin: true, userId: user});
+    await invalidatesCache({
+        product : true, 
+        order : true, 
+        admin: true, 
+        userId: user, 
+        productId: order.orderItems.map((i) =>String(i.productId)),
+    });
 
     res.status(200).json({
         success: true,
