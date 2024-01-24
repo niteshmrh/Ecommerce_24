@@ -5,6 +5,7 @@ import userRoutes from "./routes/user.js";   //importing user routes
 import productRoutes from "./routes/product.js";   //importing product routes
 import orderRoutes from "./routes/order.js";   //importing product routes
 import paymentRoutes from './routes/payment.js';   // importing payment routes
+import adminRoutes from './routes/stats.js';  // importing admin stats routes
 import NodeCache from "node-cache";   // it also stores data in ram as reddish did
 import { config } from "dotenv";    // dotenv configuration
 import bodyParser from 'body-parser';
@@ -57,6 +58,9 @@ app.use('/api/v1/order', orderRoutes);
 
 // using routes -> order route
 app.use('/api/v1/payment', paymentRoutes);
+
+// using routes -> Admin stats route
+app.use('/api/v1/dashboard', adminRoutes);
 
 app.use('/uploads', express.static("uploads"));
 app.use(ErrorMiddleware);

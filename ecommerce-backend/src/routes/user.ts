@@ -21,8 +21,4 @@ router.get('/all',adminOnly, getAllUsers);
 router.route('/:id').get(adminOnly, getUser).delete(adminOnly, deleteUser);
 
 
-
-
-
-
 export default router;
