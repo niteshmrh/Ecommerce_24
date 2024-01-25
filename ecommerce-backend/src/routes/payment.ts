@@ -14,7 +14,7 @@ router.get("/discount", applyDiscount);
 // route - /api/v1/payment/coupon/new
 router.post("/coupon/new", adminOnly, newCoupon);
 
-// route - /api/v1/payment/all
+// route - /api/v1/payment/coupon/all
 router.get("/coupon/all", adminOnly, allCoupons);
 
 // route - /api/v1/payment/coupon/:id

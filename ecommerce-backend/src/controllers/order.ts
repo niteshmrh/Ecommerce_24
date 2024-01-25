@@ -5,6 +5,7 @@ import { myCache } from '../app.js';
 import { invalidatesCache, reduceStock } from '../utils/features.js';
 import { NewOrderRequestBody } from '../types/types.js';
 import { Order } from '../models/order.js';
+import { Product } from '../models/product.js';
 
 
 export const myOrders = TryCatch( async(req, res, next)=>{
@@ -98,6 +99,14 @@ export const newOrder = TryCatch( async(req:Request<{}, {}, NewOrderRequestBody>
     if(!shippingInfo || !orderItems || !user || !subTotal || !tax || !total){
         return next(new ErrorHandler("All Feild are required", 400));
     }
+
+    for(let i=0; i<orderItems.length; i++){
+        const findProduct = await Product.findById(orderItems[i].productId);
+        if(!findProduct){
+            return next(new ErrorHandler("Product Not Found", 400));
+        }
+    }
+
     const order = await Order.create({
         shippingInfo, 
         orderItems, 
