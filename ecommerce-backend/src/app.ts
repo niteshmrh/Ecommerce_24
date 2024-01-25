@@ -27,7 +27,7 @@ export const myCache = new NodeCache();
 
 // to take the request in the form of json
 app.use(express.json());
-// app.use(express.json({limit: '50mb'}));
+app.use(express.json({limit: '50mb'}));
 app.use(bodyParser.json({ limit: "200mb" }));
 app.use(bodyParser.urlencoded({ limit: "200mb",  extended: true, parameterLimit: 1000000 }));
 
@@ -56,7 +56,7 @@ app.use('/api/v1/product', productRoutes);
 // using routes -> order route
 app.use('/api/v1/order', orderRoutes);
 
-// using routes -> order route
+// using routes -> payment route
 app.use('/api/v1/payment', paymentRoutes);
 
 // using routes -> Admin stats route
