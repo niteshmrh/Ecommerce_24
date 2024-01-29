@@ -43,6 +43,7 @@ node_modules/
 jspm_packages/
 ecommerce-backend/node_modules/
 ecommerce-backend/.env/
+ecommerce-frontend/.env/
 ecommerce-backend/package-lock.json/
 ecommerce-frontend/node_modules/
 ecommerce-frontend/package-lock.json/

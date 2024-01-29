@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Loader from './components/loader';
 import Header from './components/header';
+import { Toaster } from "react-hot-toast";
 
 
 const Home = lazy(()=>import( './pages/home'))
@@ -49,9 +50,7 @@ const App = () => {
             <Route path='/orders' element={<Orders />} />
             <Route path='/order/:id' element={<OrderDetails />} />
           </Route>
-          
-
-
+        
 
           {/* Admin Routes */}
           <Route 
@@ -80,6 +79,7 @@ const App = () => {
 
         </Routes>
       </Suspense>
+      <Toaster position='bottom-center'/>
     </Router>
   )
 }
