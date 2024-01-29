@@ -3,7 +3,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { Order } from "../models/order.js";
 import { Product } from "../models/product.js";
 import { User } from "../models/users.js";
-import { calculatePercentage } from "../utils/features.js";
+import { calculatePercentage, getInventories } from "../utils/features.js";
 
 export const getDashboardStats  = TryCatch(async(req, res, next)=>{
     console.log("------------------ getDashboard hit -------------------------");
@@ -135,9 +135,7 @@ export const getDashboardStats  = TryCatch(async(req, res, next)=>{
             user : await calculatePercentage(thisMonthUsers.length, lastMonthUsers.length),
         };
 
-        const revenue = allOrders.reduce(
-            (total, order)=> total+ (order.total || 0), 0
-        );
+        const revenue = allOrders.reduce((total, order)=> total+ (order.total || 0),0);
 
         const count = {
             revenue : revenue,
@@ -159,17 +157,7 @@ export const getDashboardStats  = TryCatch(async(req, res, next)=>{
             }
         });
 
-        const categoriesCountPromise = categories.map((category) => Product.countDocuments({ category }));
-
-        const categoriesCount = await Promise.all(categoriesCountPromise);
-        const categoryCount : Record<string, number>[] = [];
-
-        categories.forEach((category, i) =>{
-            categoryCount.push({
-                [category!] : Math.round((categoriesCount[i]/ productCount)*100),
-            })
-        })
-
+        const categoryCount = await getInventories({categories, productCount});
 
         const userRatio = {
             male : userCount - femaleUsersCount,
@@ -209,7 +197,90 @@ export const getDashboardStats  = TryCatch(async(req, res, next)=>{
 
 
 export const getPieCharts  = TryCatch(async(req, res, next)=>{
-    
+    let charts;
+    const key = "admin-pie-charts";
+    if(myCache.has(key)){
+        charts = JSON.parse(myCache.get(key)!);
+    }else{
+
+        const allOrderPromise = Order.find({}).select(["total","discount","subtotal","tax","shippingCharges",]);
+
+        const [
+            processingOrder, 
+            shippedOrder, 
+            deliveredOrder,
+            categories,
+            productCount,
+            outOfStock,
+            allOrders,
+            allUsers,
+            adminUsers,
+            customerUsers,
+        ] =await Promise.all([
+            Order.countDocuments({status: "Processing"}),
+            Order.countDocuments({status: "Shipped"}),
+            Order.countDocuments({status: "Delivered"}),
+            Product.distinct("category"),
+            Product.countDocuments(),
+            Product.countDocuments({stock:0}),
+            allOrderPromise,
+            User.find({}).select(["dob"]),
+            User.countDocuments({ role: "admin" }),
+            User.countDocuments({ role: "user" }),
+        ]);
+
+
+        const orderFullfillment = {
+            processing: processingOrder,
+            shipped: shippedOrder,
+            delivered: deliveredOrder,
+        };
+
+        const productsCategories = await getInventories({categories, productCount});
+
+        const stockAvalibility = {
+            inStock:productCount - outOfStock,
+            outOfStock: outOfStock,
+        }
+
+        const grossIncome = allOrders.reduce((prev, order) => prev + (order.total || 0),0);
+        const discount = allOrders.reduce((prev, order) => prev + (order.discount || 0),0);
+        const productionCost = allOrders.reduce((prev, order) => prev + (order.shippingCharges || 0),0);
+        const burnt = allOrders.reduce((prev, order) => prev + (order.tax || 0), 0);
+        const marketingCost = Math.round(grossIncome * (30 / 100));
+        const netMargin =grossIncome - discount - productionCost - burnt - marketingCost;
+
+        const revenueDistribution = {netMargin,discount,productionCost,burnt,marketingCost,};
+
+        const usersAgeGroup = {
+            teen: allUsers.filter((i) => i.age < 20).length,
+            adult: allUsers.filter((i) => i.age >= 20 && i.age < 40).length,
+            old: allUsers.filter((i) => i.age >= 40).length,
+          };
+      
+        const adminCustomer = {
+            admin: adminUsers,
+            customer: customerUsers,
+        };
+
+        charts = {
+            orderFullfillment,
+            productsCategories,
+            stockAvalibility,
+            revenueDistribution,
+            usersAgeGroup,
+            adminCustomer,
+        };
+
+        myCache.set(key, JSON.stringify(charts));
+    }
+
+    return res.status(200).json({
+        success : true,
+        result : charts,
+        message : "Pie Charts Data Successfully Fetched"
+    })
+
 })
 
 
