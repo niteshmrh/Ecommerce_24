@@ -3,7 +3,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { Order } from "../models/order.js";
 import { Product } from "../models/product.js";
 import { User } from "../models/users.js";
-import { calculatePercentage, getInventories } from "../utils/features.js";
+import { calculatePercentage, getChartData, getInventories } from "../utils/features.js";
 
 export const getDashboardStats  = TryCatch(async(req, res, next)=>{
     console.log("------------------ getDashboard hit -------------------------");
@@ -286,11 +286,96 @@ export const getPieCharts  = TryCatch(async(req, res, next)=>{
 
 
 export const getBarCharts  = TryCatch(async(req, res, next)=>{
-    
+    let charts;
+    const key = 'admin-bar-charts';
+    console.log("--------------------- get bar charts hit -------------------------");
+    if(myCache.has(key)){
+        charts = JSON.parse(myCache.get(key)!);
+    }else{
+        const today = new Date();
+        
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+        const twelveMonthsAgo = new Date();
+        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+
+
+        const sixMonthProductPromise = Product.find({
+            createdAt: {
+              $gte: sixMonthsAgo,
+              $lte: today,
+            },
+          }).select("createdAt");
+      
+        const sixMonthUsersPromise = User.find({
+            createdAt: {
+              $gte: sixMonthsAgo,
+              $lte: today,
+            },
+        }).select("createdAt");
+      
+        const twelveMonthOrdersPromise = Order.find({
+            createdAt: {
+              $gte: twelveMonthsAgo,
+              $lte: today,
+            },
+        }).select("createdAt");
+      
+        const [
+            products, 
+            users, 
+            orders
+        ] = await Promise.all([
+            sixMonthProductPromise,
+            sixMonthUsersPromise,
+            twelveMonthOrdersPromise,
+        ]);
+
+        const productCount = await getChartData({length:6, today, docArr:products});
+        const usersCounts = await getChartData({ length: 6, today, docArr: users });
+        const ordersCounts = await getChartData({ length: 12, today, docArr: orders });
+
+        charts = {
+            users: usersCounts,
+            products: productCount,
+            orders: ordersCounts,
+        };
+        myCache.set(key, JSON.stringify(charts));
+    }
+    return res.status(200).json({
+        success : true,
+        result : charts,
+        message : "Bar Charts Data Successfully Fetched"
+    })
 })
 
 
 
 export const  getLineCharts = TryCatch(async(req, res, next)=>{
-    
+    let charts;
+    const key = 'admin-line-charts';
+
+    if(myCache.has(key)){
+        charts = JSON.parse(myCache.get(key)!);
+    }else{
+        const today = new Date();
+        
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+        const twelveMonthsAgo = new Date();
+        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+
+
+
+        charts = {
+
+        };
+    }
+    return res.status(200).json({
+        success : true,
+        result : charts,
+        message : "Bar Charts Data Successfully Fetched"
+    })
 })
