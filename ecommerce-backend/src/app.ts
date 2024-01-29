@@ -10,6 +10,7 @@ import NodeCache from "node-cache";   // it also stores data in ram as reddish d
 import { config } from "dotenv";    // dotenv configuration
 import bodyParser from 'body-parser';
 import morgan from "morgan";
+import Stripe from "stripe";
 
 
 config({
@@ -19,10 +20,12 @@ config({
 const app = express();
 const port =process.env.PORT || 3000;
 const mongoURI = process.env.MONGO_DB_PARAMETERS || "";
+const stripeKey = process.env.STRIPE_KEY || "";
 // mongo connection
 
 connectDB(mongoURI);
 
+export const stripe = new Stripe(stripeKey);
 export const myCache = new NodeCache();
 
 // to take the request in the form of json
