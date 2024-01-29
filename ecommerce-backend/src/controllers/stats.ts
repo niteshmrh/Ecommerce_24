@@ -360,22 +360,68 @@ export const  getLineCharts = TryCatch(async(req, res, next)=>{
         charts = JSON.parse(myCache.get(key)!);
     }else{
         const today = new Date();
-        
-        const sixMonthsAgo = new Date();
-        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
         const twelveMonthsAgo = new Date();
         twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
 
 
+        // const twelveMonthProductPromise = Product.find({
+        //     createdAt: {
+        //       $gte: twelveMonthsAgo,
+        //       $lte: today,
+        //     },
+        //   }).select("createdAt");
+      
+        // const twelveMonthUsersPromise = User.find({
+        //     createdAt: {
+        //       $gte: twelveMonthsAgo,
+        //       $lte: today,
+        //     },
+        // }).select("createdAt");
+      
+        // const twelveMonthOrdersPromise = Order.find({
+        //     createdAt: {
+        //       $gte: twelveMonthsAgo,
+        //       $lte: today,
+        //     },
+        // }).select("createdAt");
+
+        const baseQuery = {
+            createdAt: {
+                $gte: twelveMonthsAgo,
+                $lte: today,
+            },
+        }
+      
+        const [
+            products, 
+            users, 
+            orders
+        ] = await Promise.all([
+            // twelveMonthProductPromise,
+            // twelveMonthUsersPromise,
+            // twelveMonthOrdersPromise,
+            Product.find(baseQuery).select("createdAt"),
+            User.find(baseQuery).select("createdAt"),
+            Order.find(baseQuery).select(["createdAt", "discount", "total"]),
+        ]);
+
+        const productCount = await getChartData({length:12, today, docArr:products});
+        const usersCounts = await getChartData({ length: 12, today, docArr: users });
+        const discount = await getChartData({length: 12,today,docArr: orders,property: "discount",});
+        const revenue = await getChartData({length: 12,today,docArr: orders,property: "total",});
 
         charts = {
-
+            users: usersCounts,
+            products: productCount,
+            discount,
+            revenue,
         };
+        myCache.set(key, JSON.stringify(charts));
     }
     return res.status(200).json({
         success : true,
         result : charts,
-        message : "Bar Charts Data Successfully Fetched"
+        message : "Line Charts Data Successfully Fetched"
     })
 })

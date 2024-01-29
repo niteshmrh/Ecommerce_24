@@ -45,7 +45,7 @@ export const invalidatesCache = async ({product, order, admin, userId, orderId, 
     }
 
     if(admin){
-
+        myCache.del(["admin-stats","admin-pie-charts","admin-bar-charts","admin-line-charts",]);
     }
 };
 
