@@ -11,6 +11,7 @@ import { config } from "dotenv";    // dotenv configuration
 import bodyParser from 'body-parser';
 import morgan from "morgan";
 import Stripe from "stripe";
+import cors from "cors";
 
 
 config({
@@ -18,6 +19,7 @@ config({
 })
 
 const app = express();
+app.use(cors());
 const port =process.env.PORT || 3000;
 const mongoURI = process.env.MONGO_DB_PARAMETERS || "";
 const stripeKey = process.env.STRIPE_KEY || "";
