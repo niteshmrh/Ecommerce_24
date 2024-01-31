@@ -18,7 +18,7 @@ router.get('/all',adminOnly, getAllUsers);
 // router.delete('/:id', deleteUser);
 
 // we can also do this using chain this
-router.route('/:id').get(adminOnly, getUser).delete(adminOnly, deleteUser);
+router.route('/:id').get(getUser).delete(adminOnly, deleteUser);
 
 
 export default router;
