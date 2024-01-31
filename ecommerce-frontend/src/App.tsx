@@ -49,7 +49,7 @@ const App = () => {
         // console.log("app.tsx", data.user);
         dispatch(userExist(data.user));
       }else{
-        console.log("Not Logged In");
+        // console.log("Not Logged In");
         dispatch(userNotExist());
       }
     });
