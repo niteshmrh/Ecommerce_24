@@ -72,7 +72,7 @@ export const getUser = TryCatch(async (req, res, next) =>{
     }
     return res.status(200).json({
         success: true,
-        user,
+        result: user,
         message:"User Data SuccessFully Fetched"
     })
 });

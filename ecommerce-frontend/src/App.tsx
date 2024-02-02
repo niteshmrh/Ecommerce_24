@@ -46,8 +46,8 @@ const App = () => {
         // console.log("Logged In",user);
         // console.log("Logged In user uid",user.uid);
         const data = await getUser(user.uid);
-        // console.log("app.tsx", data.user);
-        dispatch(userExist(data.user));
+        // console.log("app.tsx", data);
+        dispatch(userExist(data.result));
       }else{
         // console.log("Not Logged In");
         dispatch(userNotExist());
