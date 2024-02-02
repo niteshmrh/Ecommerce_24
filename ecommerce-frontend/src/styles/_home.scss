@@ -2,7 +2,7 @@
     padding:2rem 5% ;
     display: flex;
     flex-direction: column;
-    height: calc(100% - 4vh);
+    height: calc(100% - 4rem);
     width: 100%;
 
     >section{
@@ -38,17 +38,21 @@
     height: 25rem;
     padding: 1rem;
     flex: none;
+    // box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.247);
+    display: flex;
+    flex-direction: column;
     @include flex(column, flex-start, center, 4px);
     position: relative;
     background-color: white;
 
     &:hover > div{
         opacity: 1;
+        border-radius: 5px;
     }
 
     img{
         @include square(calc(18.75rem - 3rem));
-        object-fit: cover;
+        object-fit: contain;
         margin: 1rem;
     }
 
@@ -72,7 +76,7 @@
             border: none;
             background-color: $color3;
             cursor: pointer;
-            color: $color2;
+            color: $color1;
             font-size: 1.1rem;
             transition: all 0.3s;
             &:hover{

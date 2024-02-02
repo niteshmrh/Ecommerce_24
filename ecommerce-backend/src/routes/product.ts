@@ -14,7 +14,7 @@ router.get('/all',getAllProducts);   // to get all product with filter
 
 router.get('/categories',getAllCategories);
 
-router.get('/admin-products',getAdminProduct);
+router.get('/admin-products',adminOnly, getAdminProduct);
 
 router.route('/:id').get(getSingleProduct).put(adminOnly, singleupload, updateProduct).delete(adminOnly, deleteSingleProduct);
 
