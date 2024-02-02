@@ -64,7 +64,7 @@ export const productAPI = createApi({
                 invalidatesTags:["product"],
             }),
     }),
-})
+});
 
 
 export const { 
