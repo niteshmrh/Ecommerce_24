@@ -5,7 +5,10 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { CartReducerInitialState } from "../types/reducer-types";
 import { CartItems } from "../types/types";
-import { addToCart, calculatePrice, removeCartItem } from "../redux/reducer/cartReducer";
+import { addToCart, calculatePrice, discountApplied, removeCartItem } from "../redux/reducer/cartReducer";
+import { toast } from "react-hot-toast";
+import { server } from "../redux/store";
+import axios from "axios";
 
 // const cartItems = [
 //   {
@@ -26,7 +29,7 @@ import { addToCart, calculatePrice, removeCartItem } from "../redux/reducer/cart
 
 
 const Cart = () => {
-  const {shippingCharges, shippingInfo, loading, cartItems, subtotal, tax, discount,total } = useSelector((state: 
+  const {shippingCharges, cartItems, subtotal, tax, discount,total } = useSelector((state: 
     {cartReducer: CartReducerInitialState})=> state.cartReducer);
   const dispatch = useDispatch();
   
@@ -49,23 +52,72 @@ const Cart = () => {
 
 
   useEffect(() =>{
+    const {token, cancel} = axios.CancelToken.source();
     const timeOutId = setTimeout(() =>{
-      if(Math.random() > 0.5){
+      // if(Math.random() > 0.5){
+      //   setIsvalidCouponCode(true);
+      // }else{
+      //   setIsvalidCouponCode(false);
+      // }
+      // fetchCouponApi(token, cancel);
+      axios.get(
+        `${server+import.meta.env.VITE_PAYMENT_BASE_URL}/discount?coupon=${counponCode}`,
+        {
+          cancelToken: token
+        },
+      ).then((res)=>{
         setIsvalidCouponCode(true);
-      }else{
+        dispatch(discountApplied(res.data.discount));
+        dispatch(calculatePrice());
+        toast.success(res.data.message+"!!!");
+      }).catch(()=>{
+        dispatch(discountApplied(0));
         setIsvalidCouponCode(false);
-      }
-    },1000) 
+        dispatch(calculatePrice());
+        // toast.error(error.response.data.message);
+      });
+    },1000);
+
     return () =>{
       clearTimeout(timeOutId);
+      cancel();
       setIsvalidCouponCode(false);
     };
   },[counponCode])
+
 
   useEffect(()=>{
     dispatch(calculatePrice());
   },[cartItems]);
 
+
+  // const fetchCouponApi = async (token: any, cancel: any) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${server+import.meta.env.VITE_PAYMENT_BASE_URL}/discount?coupon=${counponCode}`,
+  //       {cancelToken: token},
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+
+  //     if (response && response.data && response.data.success) {
+  //       setIsvalidCouponCode(true);
+  //       dispatch(discountApplied(response.data.discount));
+  //       toast.success(response.data.message+"!!!");
+  //     } else {
+  //       setIsvalidCouponCode(false);
+  //       dispatch(discountApplied(0));
+  //       toast.error("Invalid Coupon Code!!!");
+  //     }
+  //   } catch (error) {
+  //     dispatch(discountApplied(0));
+  //     setIsvalidCouponCode(false);
+  //     toast.error(error.response.data.message);
+  //   }
+  // };
   return (
     <div className="cart">
       <main>

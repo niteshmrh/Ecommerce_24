@@ -13,7 +13,7 @@ type ProductsProps = {
 
 const ProductCard = ({productId, name, photo, price, stock, handler}:ProductsProps) => {
   return (
-    <div className="product-card">
+    <div className="product-card" key={productId}>
       <img src={`${server}/${photo}`} alt={name} />
       <p>{name}</p>
       <span>₹ {price}</span>

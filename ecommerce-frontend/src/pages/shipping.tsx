@@ -1,8 +1,12 @@
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import { BiArrowBack } from "react-icons/bi";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { CartReducerInitialState } from "../types/reducer-types";
 
 function Shipping() {
+    const {cartItems} = useSelector((state: 
+        {cartReducer: CartReducerInitialState})=> state.cartReducer);
     const navigate = useNavigate();
     const [shippingInfo, setShippingInfo] = useState({
         address:"",
@@ -15,6 +19,12 @@ function Shipping() {
     const changeHandler = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>)=>{
         setShippingInfo(prev =>({...prev, [e.target.name]:e.target.value}));
     };
+
+    useEffect(()=>{
+        if(cartItems.length <= 0){
+            return navigate('/cart');
+        }
+    },[cartItems])
 
     console.log(shippingInfo);
 
