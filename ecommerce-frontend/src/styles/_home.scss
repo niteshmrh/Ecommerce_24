@@ -18,6 +18,10 @@
         @include flex(row, space-between, center);
     }
 
+    .findmore {
+        font-size: 1rem;
+    }
+
     >main{
         width: 100%;
         flex: 1;
@@ -39,12 +43,13 @@
     padding: 1rem;
     flex: none;
     // box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.247);
-    display: flex;
-    flex-direction: column;
+    // display: flex;
+    // flex-direction: column;
     @include flex(column, flex-start, center, 4px);
     position: relative;
     background-color: white;
-
+    overflow: hidden; /* Hide scrollbars */
+ 
     &:hover > div{
         opacity: 1;
         border-radius: 5px;
@@ -61,7 +66,7 @@
         font-size: 1.1rem;
     }
 
-    >div{
+    > div {
         opacity: 0;
         position: absolute;
         @include square(100%);
@@ -69,19 +74,19 @@
         left: 0;
         background-color: #0000006b;
         @include flex;
-        button{
-            @include flex;
-            @include square(3rem);
-            border-radius: 100%;
-            border: none;
-            background-color: $color3;
-            cursor: pointer;
-            color: $color1;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-            &:hover{
-                rotate: 20deg;
-            }
+        button {
+          @include flex;
+          @include square(3rem);
+          border-radius: 100%;
+          border: none;
+          background-color: $color3;
+          cursor: pointer;
+          color: $color1;
+          font-size: 1.1rem;
+          transition: all 0.3s;
+          &:hover {
+            rotate: 20deg;
+          }
         }
     }
 }

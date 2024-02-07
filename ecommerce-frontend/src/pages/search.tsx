@@ -95,6 +95,7 @@ const Search = () => {
           <div className="search-product-list">
             {!productLoading && searchProduct?.success && searchProduct?.result.map((item)=>(
               <ProductCard 
+                key={item._id}
                 productId={item._id} 
                 name={item.name} 
                 price={item.price} 
