@@ -1,66 +1,79 @@
 import { FaTrash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
-import { OrderItem } from "../../../models/types";
+// import { OrderItem } from "../../../models/types";
+import { useSelector } from "react-redux";
+import { useDeleteOrderMutation, useOrderDetailsQuery, useUpdateOrderMutation } from "../../../redux/api/orderAPI";
 import { server } from "../../../redux/store";
+import { UserReducerInitialState } from "../../../types/reducer-types";
+import { Order, OrderItems } from "../../../types/types";
+import { Skeleton } from "../../../components/loader";
+import { responseToast } from "../../../utils/features";
 
-const img =
-  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
+// const img =
+  // "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
 
-const orderItems: OrderItem[] = [
-  {
-    name: "Puma Shoes",
-    photo: img,
-    id: "asdsaasdas",
-    quantity: 4,
-    price: 2000,
+// const orderItems: OrderItem[] = [
+//   {
+//     name: "Puma Shoes",
+//     photo: img,
+//     id: "asdsaasdas",
+//     quantity: 4,
+//     price: 2000,
+//   },
+// ];
+
+// const orderItems: any[] = [];
+
+const defaultData: Order = {
+  shippingInfo: {
+    address: "",
+    city: "",
+    state: "",
+    country: "",
+    pinCode:0,
   },
-];
+  status: "",
+  subTotal: 0,
+  discount: 0,
+  shippingCharges: 0,
+  tax: 0,
+  total: 0,
+  orderItems: [],
+  user: {
+    name:"",
+    _id:"",
+  },
+  _id:"",
+}
 
 const TransactionManagement = () => {
-  const [order, setOrder] = useState({
-    name: "Puma Shoes",
-    address: "77 black street",
-    city: "Neyword",
-    state: "Nevada",
-    country: "US",
-    pinCode: 242433,
-    status: "Processing",
-    subtotal: 4000,
-    discount: 1200,
-    shippingCharges: 0,
-    tax: 200,
-    total: 4000 + 200 + 0 - 1200,
-    orderItems,
-  });
+  const {user} = useSelector((state: {userReducer : UserReducerInitialState}) => state.userReducer);
+  const {id} = useParams();
+  const { data, isLoading, isError } = useOrderDetailsQuery(id!);
+  const navigate = useNavigate();
+  const {shippingInfo:{address,city,country,state,pinCode}, orderItems, user:{name}, status, subTotal, discount, shippingCharges, tax, total, } = data?.result || defaultData;
 
-  const {
-    name,
-    address,
-    city,
-    country,
-    state,
-    pinCode,
-    subtotal,
-    shippingCharges,
-    tax,
-    discount,
-    total,
-    status,
-  } = order;
+  const [updateOrder] = useUpdateOrderMutation();
+  const [deleteOrder] = useDeleteOrderMutation();
 
-  const updateHandler = (): void => {
-    setOrder((prev) => ({
-      ...prev,
-      status: "Shipped",
-    }));
+  const updateHandler = async() => {
+      const res = await updateOrder({userId:user?._id!, orderId:id!})
+      responseToast(res, navigate, `/admin/transaction/${id}`)
   };
+
+  const deleteHandler = async()=>{
+    const res = await deleteOrder({userId: user?._id!, orderId:id!})
+    responseToast(res, navigate, `/admin/transaction`);
+  };
+
+  if(isError) return <Navigate to={"/404"} />;
 
   return (
     <div className="admin-container">
       <AdminSidebar />
       <main className="product-management">
-        <section
+        {isLoading ? <Skeleton length={20}/> : <> <section
           style={{
             padding: "2rem",
           }}
@@ -91,7 +104,7 @@ const TransactionManagement = () => {
             Address: {`${address}, ${city}, ${state}, ${country} ${pinCode}`}
           </p>
           <h5>Amount Info</h5>
-          <p>Subtotal: {subtotal}</p>
+          <p>Subtotal: {subTotal}</p>
           <p>Shipping Charges: {shippingCharges}</p>
           <p>Tax: {tax}</p>
           <p>Discount: {discount}</p>
@@ -112,22 +125,16 @@ const TransactionManagement = () => {
               {status}
             </span>
           </p>
-          <button className="shipping-btn" onClick={updateHandler}>
+          {status != 'Delivered' ? <button className="shipping-btn" onClick={updateHandler}>
             Process Status
-          </button>
-        </article>
+          </button>: <></>}
+        </article> </>}
       </main>
     </div>
   );
 };
 
-const ProductCard = ({
-  name,
-  photo,
-  price,
-  quantity,
-  productId,
-}: OrderItem) => (
+const ProductCard = ({name,photo,price,quantity,productId,}: OrderItems) => (
   <div className="transaction-product-card">
     <img src={photo} alt={name} />
     <Link to={`/product/${productId}`}>{name}</Link>

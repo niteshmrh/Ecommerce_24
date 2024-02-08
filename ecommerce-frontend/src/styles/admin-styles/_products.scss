@@ -142,14 +142,14 @@
     }
     > h5 {
       margin: 2rem 0 0 0.5rem;
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
     }
     > p {
-      margin: 0.5rem;
+      margin-left: 0.5rem;
     }
     > .shipping-btn {
-      margin: 2rem 0;
+      margin: 1rem 0;
       padding: 1rem;
       border: none;
       background-color: rgb(5, 107, 224);
@@ -170,7 +170,7 @@
 
   > img {
     @include square(4rem);
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 5px;
   }
   > span {
