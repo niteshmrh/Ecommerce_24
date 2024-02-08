@@ -41,7 +41,7 @@ export type OrderItems = {
     photo: string;
     price: number;
     quantity: number;
-    _id:number;
+    _id:string;
 };
 
 // export type Orderitems = Omit<CartItems, "stock"> & {_id: string};
@@ -49,7 +49,7 @@ export type OrderItems = {
 export type Order = {
     orderItems: OrderItems[];
     shippingInfo: ShippingInfo;
-    subtotal: number;
+    subTotal: number;
     tax: number;
     shippingCharges: number;
     discount: number;
