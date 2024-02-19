@@ -60,22 +60,24 @@ const Cart = () => {
       //   setIsvalidCouponCode(false);
       // }
       // fetchCouponApi(token, cancel);
-      axios.get(
-        `${server+import.meta.env.VITE_PAYMENT_BASE_URL}/discount?coupon=${counponCode}`,
-        {
-          cancelToken: token
-        },
-      ).then((res)=>{
-        setIsvalidCouponCode(true);
-        dispatch(discountApplied(res.data.discount));
-        dispatch(calculatePrice());
-        toast.success(res.data.message+"!!!");
-      }).catch(()=>{
-        dispatch(discountApplied(0));
-        setIsvalidCouponCode(false);
-        dispatch(calculatePrice());
-        // toast.error(error.response.data.message);
-      });
+      if(counponCode.length >= 3){
+        axios.get(
+          `${server+import.meta.env.VITE_PAYMENT_BASE_URL}/discount?coupon=${counponCode}`,
+          {
+            cancelToken: token
+          },
+        ).then((res)=>{
+          setIsvalidCouponCode(true);
+          dispatch(discountApplied(res.data.discount));
+          dispatch(calculatePrice());
+          toast.success(res.data.message+"!!!");
+        }).catch(()=>{
+          dispatch(discountApplied(0));
+          setIsvalidCouponCode(false);
+          dispatch(calculatePrice());
+          // toast.error(error.response.data.message);
+        });
+      }
     },1000);
 
     return () =>{

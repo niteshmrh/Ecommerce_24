@@ -79,16 +79,16 @@ export type DeleteProductRequest = {
 
 
 export type NewOrderRequest = {
-    id: string;
+    // id: string;
     shippingInfo: ShippingInfo,
     orderItems: CartItems[],
     user: string,
-    subTotal: number,
+    subtotal: number,
     tax: number,
     discount: number,
     total: number,
     shippingCharges: number,
-    status: string,
+    // status: string,
 };
 
 export type UpdateOrderRequest = {

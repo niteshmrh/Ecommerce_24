@@ -20,6 +20,7 @@ const Login = lazy(()=>import( './pages/login'))
 const Orders = lazy(()=>import( './pages/orders'))
 const OrderDetails = lazy(()=>import( './pages/order-details'))
 const NotFound = lazy(()=>import( './pages/not-found'))
+const Checkout = lazy(()=>import( './pages/checkout'))
 
 
 // Admin routes
@@ -78,6 +79,7 @@ const App = () => {
             <Route path='/shipping' element={<Shipping />} />
             <Route path='/orders' element={<Orders />} />
             <Route path='/order/:id' element={<OrderDetails />} />
+            <Route path="/pay" element={<Checkout />} />
           </Route>
         
 
