@@ -12,9 +12,9 @@ export const createPaymentIntent = TryCatch(async(req, res, next) =>{
 
     const paymentIntent = await stripe.paymentIntents.create({ 
         amount: Number(amount)*100, 
-        currency:"inr" 
+        currency:"inr", 
     });
-
+    // console.log("-----------", paymentIntent);
     res.status(201).json({
         success: true,
         clientSecret: paymentIntent.client_secret,
