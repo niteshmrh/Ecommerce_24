@@ -6,11 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { saveShippingInfo } from "../redux/reducer/cartReducer";
 import { CartReducerInitialState } from "../types/reducer-types";
+import { RootState } from "../redux/store";
 
 function Shipping() {
-    const {cartItems, total} = useSelector((state: 
-        {cartReducer: CartReducerInitialState})=> state.cartReducer);
-    
+    const {cartItems, total} = useSelector((state: {cartReducer: CartReducerInitialState})=> state.cartReducer);
+    const { user } = useSelector((state: RootState) => state.userReducer);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     
@@ -33,6 +33,9 @@ function Shipping() {
             const {data} = await axios.post(`${import.meta.env.VITE_BASE_URL}${import.meta.env.VITE_PAYMENT_BASE_URL}/create`,
                 {
                     amount: total,
+                    shippingInfo: shippingInfo,
+                    description: 'E-commerece',
+                    name: user?.email,
                 },
                 {
                 headers: { 

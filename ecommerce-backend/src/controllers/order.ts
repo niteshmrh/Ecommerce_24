@@ -92,12 +92,12 @@ export const getSingleOrders = TryCatch( async(req, res, next)=>{
 
 export const newOrder = TryCatch( async(req:Request<{}, {}, NewOrderRequestBody>, res:Response, next:NextFunction)=>{
 
-    console.log("-------------- new Order hit -----------------");
+    console.log("-------------- new Order hit -----------------",req.body);
 
-    const {shippingInfo, orderItems, user, subTotal, tax, discount, total, shippingCharges, status} = req.body;
+    const {shippingInfo, orderItems, user, subtotal, tax, discount, total, shippingCharges, status} = req.body;
 
-    if(!shippingInfo || !orderItems || !user || !subTotal || !tax || !total){
-        return next(new ErrorHandler("All Feild are required", 400));
+    if(!shippingInfo || !orderItems || !user || !subtotal || !tax || !total){
+        return next(new ErrorHandler("All Feild are required in newOrder", 400));
     }
 
     for(let i=0; i<orderItems.length; i++){
@@ -111,7 +111,7 @@ export const newOrder = TryCatch( async(req:Request<{}, {}, NewOrderRequestBody>
         shippingInfo, 
         orderItems, 
         user, 
-        subTotal, 
+        subTotal: subtotal, 
         tax, 
         discount, 
         total, 

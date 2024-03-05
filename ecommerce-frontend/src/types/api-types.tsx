@@ -12,6 +12,7 @@ export type CustomError = {
 export type MessageResponse = {
     success: boolean;
     message: string;
+    thankYou?: string;
 };
 
 export type userResponse = {

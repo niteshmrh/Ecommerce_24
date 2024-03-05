@@ -51,12 +51,14 @@ const CheckOutForm = () => {
 
     if (error) {
       setIsProcessing(false);
+      console.log(error.message)
       return toast.error(error.message || "Something Went Wrong");
     }
 
     if (paymentIntent.status === "succeeded") {
       const res = await newOrder(orderData);
       dispatch(resetCart());
+      toast.success('Thank You!!! Visit Again.');
       responseToast(res, navigate, "/orders");
     }
     setIsProcessing(false);
