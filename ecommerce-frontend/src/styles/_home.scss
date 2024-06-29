@@ -24,10 +24,11 @@
 
     >main{
         width: 100%;
-        flex: 1;
+        // flex: 1;
         display: flex;
         gap: 1.65rem;
-        overflow-x: auto;
+        flex-wrap: wrap;
+        // overflow-x: auto;
 
         &::-webkit-scrollbar{
             display: none;
@@ -43,6 +44,8 @@
     padding: 1rem;
     flex: none;
     // box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.247);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 5px;
     // display: flex;
     // flex-direction: column;
     @include flex(column, flex-start, center, 4px);
